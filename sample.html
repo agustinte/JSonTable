@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+	<script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="JSonTable.js"></script>
+	<link rel="stylesheet" href="table.css" type="text/css"/>
+</head>
+	<div class="CSS_Table_Example" style="width:600px;height:150px;">
+	<table id="tabla2">
+	</table>
+</div>
+<script type="text/javascript">
+try {	
+	var cadenaLibros = '[{"Id":"1","Name":"Matt"},{"Id":"2","Name":"Rock"},{"Id":"3","Name":"Juan"},{"Id":"4","Name":"Math"},{"Id":"5","Name":"Jhon"},{"Id":"6","Name":"Norah"},{"Id":"7","Name":"Peter"},{"Id":"8","Name":"Jenifer"},{"Id":"9","Name":"Julian"},{"Id":"10","Name":"Richard"},{"Id":"11","Name":"Jose"}]';
+	var obj = JSON.parse(cadenaLibros);
+	drawTable(obj, 'tabla2', 5, 1);	
+} catch (e) {
+	alert("error page: " + e);
+}
+</script>
+
+</body>
+</html>
+
