@@ -14,23 +14,16 @@ function workTable(tableName, rows, actPage) {
   	var tot = Math.ceil((data.length) / rows);
   	var rDesde, rHasta;
   	
-  	if (actPage == 1)
-  		rDesde = 0;
-  	else
-			rDesde = (actPage - 1) * rows;
+  	rDesde = CalcRegDesde(actPage, rows);
+  	rHasta = CalcRegHasta(actPage, rows, data.length);
   	
-  	if(((actPage * rows) - 1) < data.length - 1)
-  		rHasta = (actPage * rows) - 1;
-  	else
-  		rHasta = data.length - 1;
-		
   	// Dibuja Tabla
   	for (var i = rDesde; i <= rHasta; i++) {
   		drawRow(data[i], tableName);
   	}
   	
+  	// Paginado
   	if(tot > 1){
-	  	// Agrega paginado
 	  	var footer = $("<tfoot id='tfoot'	/>")
 			$("#" + tableName).append(footer);
 	
@@ -62,19 +55,10 @@ function workTable(tableName, rows, actPage) {
 			pager.append(" | " + actPage + " - " + tot);
 
 			pager.append("</tr>");
-
-			/*
-	  	for (var i = 0; i < tot; i++) {
-	  		if(i + 1 != actPage)
-					pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + (i + 1) + ")\">" + (i + 1) + "</a>");
-	  		else
-	  			pager.append(i + 1);
-	  	}
-	  	*/
   	}
   	 
 	} catch (e) {
-		alert("JSonTable error:" + e);	
+		alert("JSonTable error: " + e);	
 	}
 }
 
@@ -102,4 +86,18 @@ function drawRow(rowData, tableName) {
 	for (var i = 0; i < keys.length; i++) {      
    	row.append($("<td>" + rowData[keys[i]] + "</td>"));
   }
+}
+
+function CalcRegDesde(actPage, rows){
+	if (actPage == 1)
+  	return 0;
+	else
+		return (actPage - 1) * rows;
+}
+
+function CalcRegHasta(actPage, rows, vlength){
+	if(((actPage * rows) - 1) < vlength - 1)
+  	return (actPage * rows) - 1;
+	else
+  	return vlength - 1;
 }
