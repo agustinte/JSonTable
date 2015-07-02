@@ -1,14 +1,23 @@
-/*! JSonTable v0.00.1 | (c) 2015, 2015 Agustín E. Tamborelli */
+/*! JSonTable v0.00.4 | (c) 2015, 2015 Agustín E. Tamborelli */
 var data;
 
 function drawTable(vData, tableName, rows, actPage) {
-	data = vData;
-	workTable(tableName, rows, actPage);
+	drawTable(vData, tableName, rows, actPage, '');
 }
 
-function workTable(tableName, rows, actPage) {
+function drawTable(vData, tableName, rows, actPage, keySort) {
+	data = vData;
+	workTable(tableName, rows, actPage, keySort);
+}
+
+function workTable(tableName, rows, actPage, keySort ) {
 	try {
-		drawTableTh(data, tableName);
+		drawTableTh(data, tableName, rows, actPage);
+		
+		// Ordena tabla
+		if(keySort != ''){
+			data = sortByKey(keySort);
+		}
 		
   	// Calcula cantidad de páginas, desde y hasta
   	var tot = Math.ceil((data.length) / rows);
@@ -35,9 +44,9 @@ function workTable(tableName, rows, actPage) {
 	
 			// Principio
 			if(actPage != 1){
-				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", 1)\">Inicio</a>");
+				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", 1, '')\">Inicio</a>");
 				pager.append(" - ");
-				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + (actPage - 1) +")\">Anterior</a>");
+				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + (actPage - 1) +", '')\">Anterior</a>");
 			}
 			else
 				pager.append("Inicio - Anterior ");
@@ -45,9 +54,9 @@ function workTable(tableName, rows, actPage) {
 			// Fin	
 			if(actPage != tot){
 				pager.append(" - ");
-				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", "+ (actPage + 1) + ")\">Siguiente</a>");
+				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", "+ (actPage + 1) + ", '')\">Siguiente</a>");
 				pager.append(" - ");
-				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", "+ tot + ")\">Fin</a>");
+				pager.append("<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", "+ tot + ", '')\">Fin</a>");
 			}
 			else
 				pager.append(" Siguiente - Fin");
@@ -62,9 +71,10 @@ function workTable(tableName, rows, actPage) {
 	}
 }
 
-function drawTableTh(data, tableName) {
+function drawTableTh(data, tableName, rows, actPage) {
 	// Borra tabla
 	var Table = document.getElementById(tableName);
+	var link;
 	Table.innerHTML = "";	
 	
 	var keys = Object.keys(data[0]);
@@ -72,8 +82,9 @@ function drawTableTh(data, tableName) {
 	var row = $("<tr />")
   $("#" + tableName).append(row); 
 
-	for (var i = 0; i < keys.length; i++) {      
-   	row.append($("<th>" + keys[i] + "</th>"));
+	for (var i = 0; i < keys.length; i++) {
+		link = "<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + actPage + ",'" + keys[i].trim() + "')\">" + keys[i] + "</a>";  
+   	row.append($("<th>" + link + "</th>"));
   }
 }
 
@@ -100,4 +111,11 @@ function CalcRegHasta(actPage, rows, vlength){
   	return (actPage * rows) - 1;
 	else
   	return vlength - 1;
+}
+
+function sortByKey(key) {
+    return data.sort(function(a, b) {
+        var x = a[key]; var y = b[key];
+        return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+    });
 }
