@@ -1,5 +1,7 @@
 /*! JSonTable v0.00.4 | (c) 2015, 2015 Agustín E. Tamborelli */
 var data;
+var lastkeySort = '';
+var keySortOrdenAac = true;
 
 function drawTable(vData, tableName, rows, actPage) {
 	drawTable(vData, tableName, rows, actPage, '');
@@ -10,14 +12,15 @@ function drawTable(vData, tableName, rows, actPage, keySort) {
 	workTable(tableName, rows, actPage, keySort);
 }
 
-function workTable(tableName, rows, actPage, keySort ) {
+function workTable(tableName, rows, actPage, keySort) {
 	try {
-		drawTableTh(data, tableName, rows, actPage);
 		
 		// Ordena tabla
 		if(keySort != ''){
 			data = sortByKey(keySort);
 		}
+		
+		drawTableTh(data, tableName, rows, actPage, keySort);
 		
   	// Calcula cantidad de páginas, desde y hasta
   	var tot = Math.ceil((data.length) / rows);
@@ -71,10 +74,11 @@ function workTable(tableName, rows, actPage, keySort ) {
 	}
 }
 
-function drawTableTh(data, tableName, rows, actPage) {
+function drawTableTh(data, tableName, rows, actPage, keySort) {
 	// Borra tabla
 	var Table = document.getElementById(tableName);
 	var link;
+	var text;
 	Table.innerHTML = "";	
 	
 	var keys = Object.keys(data[0]);
@@ -83,7 +87,14 @@ function drawTableTh(data, tableName, rows, actPage) {
   $("#" + tableName).append(row); 
 
 	for (var i = 0; i < keys.length; i++) {
-		link = "<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + actPage + ",'" + keys[i].trim() + "')\">" + keys[i] + "</a>";  
+		text = keys[i];
+		if(keys[i] == keySort){
+			if(keySortOrdenAac)
+				text = text + "&#x25B2;";
+			else
+				text = text + "&#x25BC;";
+		}
+		link = "<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + actPage + ",'" + keys[i].trim() + "')\">" + text + "</a>";  
    	row.append($("<th>" + link + "</th>"));
   }
 }
@@ -114,8 +125,27 @@ function CalcRegHasta(actPage, rows, vlength){
 }
 
 function sortByKey(key) {
+    if(lastkeySort == '')
+			keySortOrdenAac = true;
+		else if(lastkeySort == key){
+			if(keySortOrdenAac == true)
+				keySortOrdenAac = false;
+			else
+				keySortOrdenAac = true;
+		} else {
+			keySortOrdenAac = true;
+		}
+		lastkeySort = key;
+		
     return data.sort(function(a, b) {
-        var x = a[key]; var y = b[key];
+        var x, y;
+        if(keySortOrdenAac){
+        	x = a[key]; 
+        	y = b[key];
+        } else {
+        	x = b[key]; 
+        	y = a	[key];
+        }
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
 }
