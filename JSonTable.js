@@ -1,37 +1,46 @@
 /*! JSonTable v0.00.4 | (c) 2015, 2015 Agustín E. Tamborelli */
-var data;
-var lastkeySort = '';
-var keySortOrdenAac = true;
+var eData;
+var eLastkeySort = '';
+var eKeySortOrdenAac = true;
+var eArrNotShow, eArrNotShowIndex = 999;
 
 function drawTable(vData, tableName, rows, actPage) {
-	drawTable(vData, tableName, rows, actPage, '');
+	eData = vData;
+	workTable(tableName, rows, actPage, '');
 }
 
 function drawTable(vData, tableName, rows, actPage, keySort) {
-	data = vData;
+	eData = vData;
+	workTable(tableName, rows, actPage, keySort);
+}
+
+function drawTable(vData, tableName, rows, actPage, keySort, vArrNotShow) {
+	eData = vData;
+	eArrNotShow = vArrNotShow;
 	workTable(tableName, rows, actPage, keySort);
 }
 
 function workTable(tableName, rows, actPage, keySort) {
 	try {
+		SetIndexKeyNotShow();
 		
 		// Ordena tabla
 		if(keySort != ''){
-			data = sortByKey(keySort);
+			eData = sortByKey(keySort);
 		}
 		
-		drawTableTh(data, tableName, rows, actPage, keySort);
+		drawTableTh(eData, tableName, rows, actPage, keySort);
 		
   	// Calcula cantidad de páginas, desde y hasta
-  	var tot = Math.ceil((data.length) / rows);
+  	var tot = Math.ceil((eData.length) / rows);
   	var rDesde, rHasta;
   	
   	rDesde = CalcRegDesde(actPage, rows);
-  	rHasta = CalcRegHasta(actPage, rows, data.length);
+  	rHasta = CalcRegHasta(actPage, rows, eData.length);
   	
   	// Dibuja Tabla
   	for (var i = rDesde; i <= rHasta; i++) {
-  		drawRow(data[i], tableName);
+  		drawRow(eData[i], tableName);
   	}
   	
   	// Paginado
@@ -42,7 +51,7 @@ function workTable(tableName, rows, actPage, keySort) {
 			var foottr = $("<tr id='tfootTR' />")
 			$("#tfoot").append(foottr);
 	
-			var pager = $("<td colspan='2' />")
+			var pager = $("<td colspan='" + Object.keys(eData[0]).length + "' />")
 			$("#tfootTR").append(pager);	
 	
 			// Principio
@@ -88,15 +97,17 @@ function drawTableTh(data, tableName, rows, actPage, keySort) {
 
 	for (var i = 0; i < keys.length; i++) {
 		text = keys[i];
-		if(keys[i] == keySort){
-			if(keySortOrdenAac)
-				text = text + "&#x25B2;";
-			else
-				text = text + "&#x25BC;";
-		}
-		link = "<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + actPage + ",'" + keys[i].trim() + "')\">" + text + "</a>";  
-   	row.append($("<th>" + link + "</th>"));
-  }
+		if(i != eArrNotShowIndex){
+			if(keys[i] == keySort){
+				if(eKeySortOrdenAac)
+					text = text + "&#x25B2;";
+				else
+					text = text + "&#x25BC;";
+			}
+			link = "<a href='#' onclick=\"workTable('" + tableName + "', " + rows + ", " + actPage + ",'" + keys[i].trim() + "')\">" + text + "</a>";  
+	   	row.append($("<th>" + link + "</th>"));
+	  }
+	}
 }
 
 function drawRow(rowData, tableName) {
@@ -105,8 +116,9 @@ function drawRow(rowData, tableName) {
 	var row = $("<tr />")
    $("#" + tableName).append(row); 
 
-	for (var i = 0; i < keys.length; i++) {      
-   	row.append($("<td>" + rowData[keys[i]] + "</td>"));
+	for (var i = 0; i < keys.length; i++) {
+		if(i != eArrNotShowIndex)
+   		row.append($("<td>" + rowData[keys[i]] + "</td>"));
   }
 }
 
@@ -125,21 +137,21 @@ function CalcRegHasta(actPage, rows, vlength){
 }
 
 function sortByKey(key) {
-    if(lastkeySort == '')
-			keySortOrdenAac = true;
-		else if(lastkeySort == key){
-			if(keySortOrdenAac == true)
-				keySortOrdenAac = false;
+    if(eLastkeySort == '')
+			eKeySortOrdenAac = true;
+		else if(eLastkeySort == key){
+			if(eKeySortOrdenAac == true)
+				eKeySortOrdenAac = false;
 			else
-				keySortOrdenAac = true;
+				eKeySortOrdenAac = true;
 		} else {
-			keySortOrdenAac = true;
+			eKeySortOrdenAac = true;
 		}
-		lastkeySort = key;
+		eLastkeySort = key;
 		
-    return data.sort(function(a, b) {
+    return eData.sort(function(a, b) {
         var x, y;
-        if(keySortOrdenAac){
+        if(eKeySortOrdenAac){
         	x = a[key]; 
         	y = b[key];
         } else {
@@ -148,4 +160,14 @@ function sortByKey(key) {
         }
         return ((x < y) ? -1 : ((x > y) ? 1 : 0));
     });
+}
+
+function SetIndexKeyNotShow(){
+	if(eArrNotShow != ''){
+		var keys = Object.keys(eData[0]);
+		for (var i = 0; i < keys.length; i++) {
+			if(keys[i] == eArrNotShow)
+				eArrNotShowIndex = i;
+		}
+	}
 }
