@@ -15,7 +15,7 @@
 try {	
 	var cadenaLibros = '[{"Id":"1","Name":"Khije","Color":"red","Actr":"none"},{"Id":"2","Name":"Alba","Color":"red","Actr":"none"},{"Id":"3","Name":"Thomas","Color":"red","Actr":"none"},{"Id":"4","Name":"Beter","Color":"red","Actr":"none"},{"Id":"5","Name":"Fer","Color":"brown","Actr":"none"},{"Id":"6","Name":"Norah","Color":"blue","Actr":"none"},{"Id":"7","Name":"Peter","Color":"red","Actr":"none"},{"Id":"8","Name":"Jenifer","Color":"red","Actr":"none"},{"Id":"9","Name":"Julian","Color":"yellow","Actr":"none"},{"Id":"10","Name":"Richard","Color":"blue","Actr":"none"},{"Id":"11","Name":"Jose","Color":"white","Actr":"none"}]';
 	var obj = JSON.parse(cadenaLibros);
-	drawTable(obj, 'tabla2', 5, 1, 'Id', 'Actr');	
+	drawTable(obj, 'tabla2', 5, 1, 'Id', ['Actr']);	
 } catch (e) {
 	alert("error page: " + e);
 }

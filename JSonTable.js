@@ -2,7 +2,7 @@
 var eData;
 var eLastkeySort = '';
 var eKeySortOrdenAac = true;
-var eArrNotShow, eArrNotShowIndex = 999;
+var eArrNotShow, eArrNotShowIndex = [];
 
 function drawTable(vData, tableName, rows, actPage) {
 	eData = vData;
@@ -97,7 +97,7 @@ function drawTableTh(data, tableName, rows, actPage, keySort) {
 
 	for (var i = 0; i < keys.length; i++) {
 		text = keys[i];
-		if(i != eArrNotShowIndex){
+		if($.inArray(i, eArrNotShowIndex) == -1){
 			if(keys[i] == keySort){
 				if(eKeySortOrdenAac)
 					text = text + "&#x25B2;";
@@ -111,15 +111,19 @@ function drawTableTh(data, tableName, rows, actPage, keySort) {
 }
 
 function drawRow(rowData, tableName) {
-	var keys = Object.keys(rowData);
+	try {
+		var keys = Object.keys(rowData);
+		var row = $("<tr />")
+   	$("#" + tableName).append(row); 
 
-	var row = $("<tr />")
-   $("#" + tableName).append(row); 
-
-	for (var i = 0; i < keys.length; i++) {
-		if(i != eArrNotShowIndex)
-   		row.append($("<td>" + rowData[keys[i]] + "</td>"));
-  }
+		for (var i = 0; i < keys.length; i++) {
+			if($.inArray(i, eArrNotShowIndex) == -1){
+   			row.append($("<td>" + rowData[keys[i]] + "</td>"));
+  		}
+		}
+	} catch (e) {
+		alert("Error en drawRow: " + e);
+	}
 }
 
 function CalcRegDesde(actPage, rows){
@@ -163,11 +167,16 @@ function sortByKey(key) {
 }
 
 function SetIndexKeyNotShow(){
-	if(eArrNotShow != ''){
-		var keys = Object.keys(eData[0]);
-		for (var i = 0; i < keys.length; i++) {
-			if(keys[i] == eArrNotShow)
-				eArrNotShowIndex = i;
-		}
+	try {
+		if(eArrNotShow != ''){
+			// Obtiene las claves de la tabla
+			var keys = Object.keys(eData[0]);
+			for (var i = 0; i < keys.length; i++) {
+				if($.inArray(keys[i], eArrNotShow) != -1)
+					eArrNotShowIndex.push(i);
+			}
 	}
-}
+	} catch (e) {
+		alert("Error en SetIndexKeyNotShow: " + e)
+	}
+} 
