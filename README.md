@@ -11,13 +11,11 @@ drawTable(vData, tableName, rows, actPage, keySort, vArrNotShow)
  - actPage (requerido): pagina actual a mostrar.
  - keySort (opcional): nombre del campo a ordenar.
  - vArrNotShow (opcional): Array con los nombres de los campos a ocultar. Ejemplo "['Colmuna1', 'Columna4']"
+ - vColumnLinks (opcional): Array con la configuracion de las funciones para los hipervinculos mostrar. El array debe estar compuesto por: NOMBRECAMPOCOLUMNA;NOMBREFUNCION;CAMPOVALORFUNCION 
 
 Sobreescrituras permitidas:
 - drawTable(vData, tableName, rows, actPage)
 - drawTable(vData, tableName, rows, actPage, keySort)
 - drawTable(vData, tableName, rows, actPage, keySort, vArrNotShow)
+- drawTable(vData, tableName, rows, actPage, keySort, vArrNotShow, vColumnLinks)
 
-------------------------------
-Pendiente (05-07-2015)
-------------------------------
- - Permitir agregar links a columnas (informando una funcion javascript para seter el onclick de cada columna0)
