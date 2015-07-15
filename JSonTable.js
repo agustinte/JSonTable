@@ -3,6 +3,9 @@ var eData;
 var eLastkeySort = '';
 var eKeySortOrdenAac = true;
 var eArrNotShow, eArrNotShowIndex = [];
+var eArrColumnLinks, eArrColumnLinksIndex = [];
+
+// Constructores
 
 function drawTable(vData, tableName, rows, actPage) {
 	eData = vData;
@@ -19,6 +22,16 @@ function drawTable(vData, tableName, rows, actPage, keySort, vArrNotShow) {
 	eArrNotShow = vArrNotShow;
 	workTable(tableName, rows, actPage, keySort);
 }
+
+function drawTable(vData, tableName, rows, actPage, keySort, vArrNotShow, vColumnLinks) {
+	eData = vData;
+	eArrNotShow = vArrNotShow;
+	eArrColumnLinks = vColumnLinks;
+	
+	workTable(tableName, rows, actPage, keySort);
+}
+
+// fin Constructores
 
 function workTable(tableName, rows, actPage, keySort) {
 	try {
@@ -112,13 +125,21 @@ function drawTableTh(data, tableName, rows, actPage, keySort) {
 
 function drawRow(rowData, tableName) {
 	try {
+		var lFunction = '';
 		var keys = Object.keys(rowData);
 		var row = $("<tr />")
    	$("#" + tableName).append(row); 
 
 		for (var i = 0; i < keys.length; i++) {
 			if($.inArray(i, eArrNotShowIndex) == -1){
-   			row.append($("<td>" + rowData[keys[i]] + "</td>"));
+				
+				lFunction = GetFunction(rowData, keys[i]);
+				
+				if(lFunction != ''){
+					row.append($("<td><a href='#' onclick=\"" + lFunction + "\">" + rowData[keys[i]] + "</a></td>"));
+				} else {
+   				row.append($("<td>" + rowData[keys[i]] + "</td>"));
+   			}
   		}
 		}
 	} catch (e) {
@@ -179,4 +200,29 @@ function SetIndexKeyNotShow(){
 	} catch (e) {
 		alert("Error en SetIndexKeyNotShow: " + e)
 	}
-} 
+}
+
+function GetFunction(vReg, vKey){
+	
+	// eArrColumnLinks, eArrColumnLinksIndex
+	var txt = '';
+	var lFunction, Value;
+	
+	try {
+		if(eArrColumnLinks != '' && eArrColumnLinks != undefined){
+			// Obtiene las claves
+			var keys = Object.keys(vReg);
+			
+			for (var i = 0; i < eArrColumnLinks.length; i++) {
+				if(vKey == eArrColumnLinks[i].split(';')[0]){
+					lFunction = eArrColumnLinks[i].split(';')[1];
+					Value = vReg[eArrColumnLinks[i].split(';')[2]]
+					txt = lFunction + "('" + Value + "');"
+				}
+			}
+		}
+	} catch (e) {
+		alert("Error al obtener funcion: " + e)
+	}
+	return txt;
+}  
